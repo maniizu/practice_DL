@@ -10,10 +10,13 @@ import matplotlib.pyplot as plt
 from train_NN import get_mnist_data
 from multi_layer_net_extend import MultiLayerNetExtend
 from optimizers import SGD, Adam
+from util import shuffle_dataset
 
 def main():
     # データ読み込み
     [x_train, t_train, x_test, t_test] = get_mnist_data()
+
+    x_train, t_train = shuffle_dataset(x_train, t_train)
     # 学習データの削減
     x_train = x_train[:1000]
     t_train = t_train[:1000]
@@ -44,7 +47,7 @@ def main():
             t_batch = t_train[batch_mask]
 
             for _network in (bn_network, network):
-                grads = _network.numerical_gradient(x_batch, t_batch)
+                grads = _network.gradient(x_batch, t_batch)
                 opt.update(_network.params, grads)
 
             if (i+1) % iter_per_epoch == 0:
@@ -89,7 +92,7 @@ def main():
             plt.xticks([])
         else:
             plt.xlabel("epochs")
-        plt.legend(loc='lower right')
+        plt.legend(loc='upper right')
 
     plt.show()
 
